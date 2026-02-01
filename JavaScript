@@ -1,0 +1,156 @@
+/**
+ * [FILE: app.js]
+ * INFINITY VAULT CORE ENGINE v6.0.0 (MASTER EDITION)
+ * FEATURES: REAL-TIME FAKE METRICS, WALLET CONNECT, STAKING SIMULATION
+ */
+
+class InfinityVaultProtocol {
+    constructor() {
+        this.config = {
+            contract: "0xYOUR_CONTRACT_ADDRESS",
+            networkId: 97,
+            priceBNB: 612.45,
+            refreshRate: 3000
+        };
+
+        this.state = {
+            isConnected: false,
+            address: null,
+            provider: null,
+            stats: {
+                totalReward: 620000000,
+                dailyPayout: 115000000,
+                newUsers: 1600
+            }
+        };
+
+        this.init();
+    }
+
+    async init() {
+        console.log("System Loading: Infinity Vault v6.0...");
+        this.setupNeuralBackground();
+        this.attachEventListeners();
+        this.runRealtimeCounters();
+        this.generateFakeLedger();
+        this.updateClock();
+    }
+
+    // Module 1: Fake Real-time Statistics Logic (Logic 4, 9)
+    runRealtimeCounters() {
+        setInterval(() => {
+            // Increment Stats to look real
+            this.state.stats.totalReward += Math.random() * 500;
+            this.state.stats.dailyPayout += Math.random() * 50;
+            this.state.stats.newUsers += Math.floor(Math.random() * 2);
+
+            document.getElementById('totalDist').innerText = `$${this.state.stats.totalReward.toLocaleString(undefined, {minimumFractionDigits: 2})} USD`;
+            document.getElementById('dailyPayout').innerText = `$${this.state.stats.dailyPayout.toLocaleString()} USD`;
+            document.getElementById('newUsers').innerText = `${this.state.stats.newUsers}+`;
+        }, 2000);
+    }
+
+    // Module 2: Wallet Discovery System (Feature 13, 23)
+    async connectWallet() {
+        if (typeof window.ethereum !== 'undefined') {
+            try {
+                this.logToLedger("Initializing Handshake with MetaMask...");
+                const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                this.state.address = accounts[0];
+                this.state.isConnected = true;
+                
+                document.getElementById('connectBtn').innerText = `${this.state.address.slice(0,6)}...${this.state.address.slice(-4)}`;
+                this.logToLedger(`Access Granted: Node ${this.state.address.slice(0,10)}`);
+                this.notifySuccess("Vault Secured & Synchronized.");
+            } catch (err) {
+                this.logToLedger("Handshake Denied by User.");
+            }
+        } else {
+            this.logToLedger("Critical: No Wallet Injection Detected.");
+            alert("Please use Trust Wallet or MetaMask App Browser");
+        }
+    }
+
+    // Module 3: Staking & Unstaking Engine (Logic 1, 2, 10)
+    async executeStake() {
+        const val = document.getElementById('mainInput').value;
+        if (!val || val <= 0) return this.notifyError("Input Quantity Required.");
+
+        this.logToLedger(`Simulating Stake: ${val} BNB...`);
+        document.getElementById('stakeBtn').innerText = "SYNCHRONIZING BLOCKCHAIN...";
+
+        setTimeout(() => {
+            confetti({
+                particleCount: 150,
+                spread: 70,
+                origin: { y: 0.6 },
+                colors: ['#06b6d4', '#4f46e5', '#ffffff']
+            });
+            this.logToLedger(`CONFIRMED: Hash 0x${Math.random().toString(36).substr(2, 24)}...`);
+            document.getElementById('stakeBtn').innerText = "EXECUTE STAKE PROTOCOL";
+            this.notifySuccess(`Successfully Staked ${val} BNB`);
+        }, 2500);
+    }
+
+    // Module 4: Fake Ledger Generator (Feature 20)
+    generateFakeLedger() {
+        const actions = ["DEPOSIT", "WITHDRAWAL", "REWARD_CLAIM", "UNSTAKE"];
+        const ledger = document.getElementById('liveLogs');
+        
+        setInterval(() => {
+            const action = actions[Math.floor(Math.random() * actions.length)];
+            const amount = (Math.random() * 50).toFixed(4);
+            const entry = document.createElement('div');
+            entry.className = "log-item border-l border-cyan-500/30 pl-3 py-1";
+            entry.innerHTML = `<span class="text-cyan-400">[${action}]</span> User 0x...${Math.floor(Math.random()*9999)} processed ${amount} BNB`;
+            
+            ledger.prepend(entry);
+            if (ledger.children.length > 8) ledger.removeChild(ledger.lastChild);
+        }, 4000);
+    }
+
+    // Module 5: Neural Background Animation (Feature 3)
+    setupNeuralBackground() {
+        const canvas = document.getElementById('neuralCanvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        // [বিশাল ক্যানভাস অ্যানিমেশন লজিক এখানে]
+    }
+
+    // Utility Modules
+    logToLedger(msg) {
+        console.log(`[VAULT-LOG]: ${msg}`);
+    }
+
+    notifySuccess(msg) {
+        // Implement professional toast or alert
+        console.log("SUCCESS: " + msg);
+    }
+
+    updateClock() {
+        setInterval(() => {
+            const now = new Date();
+            document.getElementById('liveDate').innerText = now.toLocaleString().toUpperCase();
+        }, 1000);
+    }
+
+    attachEventListeners() {
+        document.getElementById('connectBtn').onclick = () => this.connectWallet();
+        document.getElementById('stakeBtn').onclick = () => this.executeStake();
+        document.getElementById('maxBtn').onclick = () => {
+            document.getElementById('mainInput').value = "48150.00";
+            this.logToLedger("Smart Max Calculated (99% Liquidity)");
+        };
+        
+        document.querySelectorAll('.perc-btn').forEach(btn => {
+            btn.onclick = (e) => {
+                const p = e.target.dataset.p;
+                document.getElementById('mainInput').value = (48150 * p / 100).toFixed(2);
+            };
+        });
+    }
+}
+
+// Initializing Engine
+const MainNode = new InfinityVaultProtocol();
